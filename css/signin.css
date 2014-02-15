@@ -1,0 +1,92 @@
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: white;
+}
+
+.form-signin {
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+    margin-bottom: 10px;
+    color:white;
+    font-family:open sans;
+    font-size:30
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  font-size: 16px;
+  height: auto;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="text"] {
+  margin-bottom: -1px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.left_panel {
+    width: 50%;
+    float:left;
+    text-align:center;
+    margin-top:30px;
+    padding:0px;
+    vertical-align: middle;
+}
+
+.right_panel {
+    width: 50%;
+    float:right;
+    padding: 20px;
+}
+
+.floater {
+    float:none;
+    height:50%;
+    background-color:lightblue;
+    margin-top: 10%;
+    padding: 40px;
+}
+
+.slogan {
+    font-size:20px;
+    align-content:center;
+    padding: 40px 0px;
+}
+
+.title_logo {
+    font-family:open sans;
+    font-weight:700;
+    font-size:50px;
+    align-content:center;
+    position:relative;
+    padding:0 auto;
+}
+
+.tab-name {
+    color:white;
+    font-family:open sans;
+    font-size:20;
+    position: absolute;
+}
+
+.nav-tabs {
+    padding-left:100px;
+}

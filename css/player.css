@@ -1,0 +1,44 @@
+.title-logo {
+    font-family:open sans;
+    font-weight:700;
+    font-size:35px;
+    align-content:center;
+    width:100%;
+    margin-right: 20px;
+    margin-top: 5px;
+    color:lightblue
+}
+
+.feed {
+	font-family: Helvetica;
+}
+
+.video-area {
+	font-family: Helvetica;
+}
+
+.content {
+	font-family: Helvetica;
+}
+
+.user-title {
+    font-family: open sans;
+    color: grey;
+    margin-top: 7px;
+    font-size: 20px;
+}
+.widget.xlarge {
+    background-color: rgb(218, 230, 240);
+}
+
+.review {
+    color: rgb(101, 101, 209);
+}
+a#best-answer {
+    color: grey;
+    cursor: pointer;
+}
+
+a#best-answer .fa-check.checked {
+    color: aquamarine;
+}

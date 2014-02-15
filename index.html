@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MainStackr</title>
+    <link href="css/application.css" rel="stylesheet">
+    <link rel="shortcut icon" href="img/favicon.png">
+    <script src="http://code.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="js/underscore-1.1.6.js"></script>
+    <script src="http://www.parsecdn.com/js/parse-1.2.13.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+</head>
+<div id="app">
+</div>
+
+<!-- jquery and friends -->
+<script src="lib/jquery/jquery-2.0.3.min.js"> </script>
+<!-- jquery plugins -->
+<script src="lib/icheck.js/jquery.icheck.js"></script>
+<script src="lib/sparkline/jquery.sparkline.js"></script>
+<script src="lib/jquery-ui-1.10.3.custom.js"></script>
+<script src="lib/jquery.slimscroll.js"></script>
+<!-- google API -->
+<script src="file://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+<!-- APP View -->
+<script src="js/player.js"></script>
+<script type="text/template" id="player-template">
+<link href="css/player.css" rel="stylesheet">
+<div class="wrap">
+    <header class="page-header">
+        <div class="navbar">
+            <ul class="nav navbar-nav navbar-right pull-left">
+            <p class="title-logo">
+                <a id="return-home" style="cursor: pointer">mainstackr</a>
+            </p>
+            </ul>
+            <ul class="nav navbar-nav navbar-right pull-right">
+                <% if (Parse.User.current().get("first_name") === "Guest") { %>
+                    <li class="user-title"> <%= Parse.User.current().get("first_name") %> </li>
+                <% } else { %>
+                    <li class="user-title"> <%= Parse.User.current().get("first_name") %> <%= Parse.User.current().get("last_name") %> </li>
+                <% } %>
+                <li class="divider"></li>
+                <li class="hidden-xs dropdown">
+                    <a href="#" id="return-home">
+                        <i class="fa fa-lg fa-home"></i>
+                    </a>
+                </li>
+                <!--<li class="hidden-xs"><a href="#"><i class="fa fa-sign-out"></i></a></li>-->
+            </ul>
+            <form id="search-form" class="navbar-form pull-right" role="search">
+            <!--    <input type="search" class="search-query" placeholder="Search..."> -->
+            </form>
+        </div>
+    </header>
+    <div class="content container" id="content-container">
+        <div class="row">
+            <div class="row">
+                <div class="col-md-12">
+                </div>
+            </div>
+            <div class="col-md-7">
+                <h2 class="page-title"><%- title %></h2>
+                <section class="widget">
+                    <div style="text-align:center; vertical-align:middle;">
+                    <p><div id="player" style="width: 100%"></div></p>
+                    </div>
+                </section>
+                <h7>
+                <i class="eicon-chat"></i>
+                <strong>Note  </strong><input type="checkbox" id="pause-mode" value="1" onclick="pause_mode()" checked> Pause on Type </input>
+                <div class="checkbox" id="">
+                    <label>
+                    </label>
+                    <button class="btn btn-lg btn-primary" id="exclamation"><i class="fa fa-lg fa-exclamation"></i></button>
+                    <button class="btn btn-lg btn-primary" id="LOL">LOL</button>
+                    <button class="btn btn-lg btn-primary" id="Gotcha">Gotcha!</button>
+                    <button class="btn btn-lg btn-primary" id="Confusing">Confusing</button>
+                    <button class="btn btn-lg btn-primary" id="heart"><i class="fa fa-lg fa-heart"></i></button>
+                    <button class="btn btn-lg btn-primary" id="clear">Clear <i class="fa fa-lg fa-smile-o"></i></button>
+                </div>
+                </h7>
+                <div id="chat" class="chat">
+                    <div class="col-xs-9">
+                    <% if (Parse.User.current().get("username") === "userBeta@berkeley.edu") {%>
+                            <textarea id="new-message" type="text" onkeydown="pause()" class="form-control input-transparent message" placeholder="Signin to tag the video and create your stack" disabled></textarea>
+                            <input id="time-message" type="hidden" onclick="printTime()">
+                            <input id="start-time" type="hidden" value="" onclick="setTime()">
+                            <input id="seconds" type="hidden" value="" onclick="getSeconds()">
+                    <% } else { %>
+                            <textarea id="new-message" type="text" onkeydown="pause()" class="form-control input-transparent message" placeholder="Tag the moment with a question or comment" onkeyup="play()"></textarea>
+                            <input id="time-message" type="hidden" onclick="printTime()">
+                            <input id="start-time" type="hidden" value="" onclick="setTime()">
+                            <input id="seconds" type="hidden" value="" onclick="getSeconds()">
+                    <% } %>
+                    </div>
+                    <div class="col-xs-3" id="col-xs-3">
+                    <a href="#"> <i id="new-message-btn" class="fa fa-3x fa-arrow-right"></i> </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5" style="background-color:white;">
+            <section class="widget xlarge">
+                    <header>
+                        <h4 class="feed" style="color: rgb(101, 101, 209);">
+                            <i class="eicon-share"></i>
+                            Discussions
+                        </h4>
+                        <div class="actions">
+                            <!--<button class="btn btn-transparent btn-xs" id="pop-button">Popular Moments<i class="fa fa-arrow-down"></i></button>-->
+                           <button class="btn btn-transparent btn-xs" id="now-button">This minute<i class="fa fa-arrow-down"></i></button>
+                           <button class="btn btn-transparent btn-xs" id="all-button">all<i class="fa fa-arrow-down"></i></button>
+                           <button class="btn btn-transparent btn-xs" id="questions">questions<i class="fa fa-arrow-down"></i></button>
+                        </div>
+                    </header>
+                    <div class="body">
+                        <div id="feed" class="feed">
+                        </div>
+                    </div>
+                </section>
+                <div class="sender"></div>
+                <a></a>
+            </div>
+        </div>
+    </div>
+</div>
+</script>
+<!--backbone and friends -->
+<script src="lib/backbone/underscore-min.js"></script>
+<script src="lib/backbone/backbone-min.js"></script>
+<script src="lib/backbone/backbone.localStorage-min.js"></script>
+<!-- basic application js-->
+<script src="js/app.js"></script>
+<script src="js/settings.js"></script>
+
+<!-- page specific -->
+<script src="js/index.js"></script>
+<!-- a comment template -->
+<script type="text/template" id="message-template">
+      <div class="sender pull-left">
+          <div class="time" style="font-color:#0020C2">
+            <a class="review" style="cursor:hand;" style="*cursor:hand;"><%- time %></a>
+          </div>
+          <div>
+          <strong style="color:orange; font-weight: bolder"><%- upvotes %></strong>
+          <a href="#">
+             <i class="fa fa-2x fa-arrow-up"></i>
+          </a>
+          <strong style="color:orange;"><%- downvotes %></strong>
+          <a href="#">
+             <i class="fa fa-2x fa-arrow-down"></i>
+          </a>
+          </div>
+      </div>
+      <div body>
+      <section>
+            <% if (!isQuestion) { %>
+            <div class="chat-message-body special" style="background: white !important; color: white !important;
+                background-color: white !important; border-left-color: orange !important; border-left-width: thick;" id='charmessagebodys'>
+            <%} else { %>
+            <div class="chat-message-body special" style="background: white !important; color: white !important;
+                background-color: white !important; border-left-color: purple !important; border-left-width: thick;" id='charmessagebodys'>
+            <% } %>
+              <div class="sender user" style="color: black !important; font-weight: bold"> <%- user %></div>
+              <div class="comment" style="color:black">
+                  <%- comment %>
+              </div>
+                <div>
+                <a href="#" id="reply-now" class="reply"> <i class="fa fa-lg fa-reply"></i> </a>
+                </div>
+                <div id="reply-text">
+                <textarea  class='replyText hidden' id='replyText' style="border-radius: 2px !important;"></textarea>
+                <a href="#" id="sendReply" class="sendReply hidden"> <i class="fa fa-lg fa-arrow-right"></i> </a>
+                <a href="#" id="unReply"class="unReply hidden"> <i class="fa fa-lg fa-times"></i> </a>
+                </div>
+          </div>
+      </section>
+      </div>
+      <div class="replies">
+      <div body>
+         <section id="reply-list">
+         </section>
+         </div>
+     </div>
+</script>
+<!-- reply -->
+<script type="text/template" id="reply-template">
+<div>
+         <p>
+         <div class="chat-message-body special" style="background: white !important; color: white!important;
+          background-color: white !important; border-left-color: lightblue !important; border-left-width: thick;">
+         <span class="arrow"></span>
+         <div class="sender user" style="color: black !important; font-weight: bold; "><%- username %></div>
+         <div class="comment" style="color:black">
+         <%= text %>
+         </div>
+            <a id="best-answer"><i class="fa fa-2x fa-check <% if (best) { %> checked <% } %>" id="check"></i></a>
+         </div>
+         </p>
+</div>
+</script>
+<!-- start templater-->
+<script type="text/template" id="start-template" src="assets/twitterbootstrap/js/bootstrap-tab.js">
+
+<link href="css/signin.css" rel="stylesheet">
+<div class="floater">
+    <div class="container signin" style="clear:both; position: relative;">
+    <div class="left_panel">
+        <p class="title_logo">
+            mainstackr
+        </p>
+        <p class="slogan">
+            The best way to comunicate, view & publish your ideas about lectures.
+        </p>
+    </div>
+    <div class="right_panel" id="right_panel">
+    <ul class="nav nav-tabs tabs">
+        <li class=""  onclick="onSignIn()"><a id="sign-in" class="tab-name"><strong>Sign In</strong></a></li>
+        <li onclick="onSignUp()" class=""><a id="sign-up" class="tab-name active"><strong>Sign Up</strong></a></li>
+    </ul>
+    <div id='tab-content' class="tab-content">
+        <div class="tab-pane" id="signin">
+            <form class="form-signin" role="form">
+            <div class="error" style="display:none"></div>
+            <input type="email" class="form-control" id ="signin-email" placeholder="@berkeley.edu" required autofocus>
+            <input type="password" class="form-control" id= "signin-password" placeholder="Password" required>
+            <a href="#"><button class="btn btn-lg btn-primary btn-block" type="submit" id="sign-in-sub">Sign In</button></a>
+            </form>
+        </div>
+        <div class="tab-pane active" id="signup">
+            <form class="form-signin" role="form">
+            <div class="error" style="display:hidden" id="signup-error"></div>
+            <input type="first_name" class="form-control" id ="first_name" placeholder="First Name" required>
+            <input type="last_name" class="form-control" id="last_name" placeholder="Last Name" required>
+            <input type="email" class="form-control" id ="signup-email" placeholder="@berkeley.edu required" required>
+            <input type="password" class="form-control" id= "signup-password" placeholder="Password" required>
+            <a href="#"><button class="btn btn-lg btn-primary btn-block" type="submit" id="sign-up-sub">Sign Up</button></a>
+            </form>
+        </div>
+    </div>
+    </div>
+
+</div> 
+</div>
+</script>
+<script type="text/javascript">
+    function onSignUp() {
+        $('#sign-in').removeClass('active');
+        $('#sign-up').addClass('active');
+        $('#signin').removeClass('active');
+        $('#signup').addClass('active');
+    };
+
+    function onSignIn() {
+        $('#sign-in').addClass('active');
+        $('#sign-up').removeClass('active');
+
+        $('#signin').addClass('active');
+        $('#signup').removeClass('active');
+    };
+</script> 
+
+<!-- profile template -->
+<script type="text/template" id="profile-template">
+<link href="css/profile-5.css" rel="stylesheet">
+<div class="wrap">
+    <header class="page-header">
+        <div class="navbar">
+                <ul class="nav navbar-nav navbar-right pull-left">
+                    <p class="title-logo">
+                     mainstackr
+                    </p>
+                </ul>
+                <ul class="nav navbar-nav navbar-right pull-right">
+                    <% if (Parse.User.current().get("first_name") === "Guest") { %>
+                        <li class="user"> <%= Parse.User.current().get("first_name") %> </li>
+                    <% } else { %>
+                        <li class="user"> <%= Parse.User.current().get("first_name") %> <%= Parse.User.current().get("last_name") %> </li>
+                    <% } %>
+                    <li class="divider"></li>
+                    <li class="hidden-xs dropdown">
+                        <a>
+                            <i class="fa fa-lg fa-plus-circle" onclick="comingSoon()"></i>
+                        </a>
+                    </li>
+                    <li class="hidden-xs dropdown">
+                        <a>
+                            <i class="fa fa-lg fa-info-circle"></i>
+                        </a>
+                    </li>
+                    <li class="hidden-xs dropdown">
+                        <% if (Parse.User.current().get("username") === "user@berkeley.edu" ||
+                            Parse.User.current().get("username") === "userBeta@berkeley.edu") { %>
+                            <a>
+                                <i class="fa fa-lg fa-sign-in" id="sign-out"></i>
+                            </a>
+                        <% } %>
+                    </li>
+                    <li class="hidden-xs dropdown">
+                    </li>
+                    <li class="hidden-xs">
+                        <a href="#">
+                            <% if (Parse.User.current().get("username") === "userBeta@berkeley.edu") {%>
+                                
+                            <% } else { %>
+                                <a href="#" id="sign-out"><i class="fa fa-lg fa-sign-out"></i></a>
+                            <% } %>
+                        </a>
+                    </li>
+                </ul>
+                <form id="search-form" class="navbar-form" role="search" style="color: black">
+
+                <input type="search" class="search-bar" id="search-bar" placeholder="Search results: CS 61c" disabled>
+
+                </form>
+        </div>
+    </header>
+    <div class="content container" id="content-container">
+        <div class="row">
+            <div class="row">
+                <div class="col-md-12">
+                </div>
+            </div>
+            <div class="left-panel">
+                <div class="profile-panel">
+                    <div class="profile-info">
+                        <p class="profile-name">
+ 
+                        </p>
+                        <p class="attributes">
+                            <% if (Parse.User.current().get("username") === "userBeta@berkeley.edu") {%>
+                                <a href="#" id="sign-out" class="signIn"> Sign Up or Sign In </a>
+                            <% } %>
+                        </p>
+                    </div>
+                    <div class="head-activity">
+                        <p class="attributes">
+                            Recent Activity
+                        </p>
+                        <button class="btn btn-xs btn-primary" id="replied2me">replies to me</button><button class="btn btn-xs notification" disabled id="number-notifs"><%- notification%></button>
+                        <button class="btn btn-xs btn-primary" id="peoplesQ">class questions</button>
+                    </div>
+                    <div class="activity" id="activity">
+                    </div>
+                </div>
+            </div>
+            <span class="right-panel" id="right-panel">
+                
+                <span class="notes">
+                    <div class="video-area" id="video-area">
+                    <span class="first-row" id ="first-row">
+                    </span>
+                    <span class="second-row" id ="second-row">
+                    </div> 
+
+                </span>
+
+            </span>
+        </div>
+    </div>
+</div>
+</script>
+</script>
+<script type="text/template" id="result-template">
+<td class="video">
+    <p style="cursor: pointer !important" id="test" class="yt_thumbnail"><strong><%- title %></strong>
+        <div class="highlight">
+            <%- highlights %>
+        </div>
+    </p>
+    <a id="test"><image width="250" height="175" src=<%-thumbnail%>></image></a>
+    <div class="video-highlights">
+    <% if (Parse.User.current().get("username") === "user@berkeley.edu" ||
+            Parse.User.current().get("username") === "userBeta@berkeley.edu") { %>
+        <!-- <button class="btn btn btn-primary myStack" id="myStack" disabled>view my Stack</button> -->
+    <% } else { %>
+        <!-- <button class="btn btn btn-primary myStack" id="myStack">view my Stack</button> -->
+    <% } %>
+    </div>
+ </td>
+</script>
+<script type="text/template" id="news-template">
+<div class="activity-element">
+    <p class="activity-user"><%- user %></p>
+    <p class="activity-note">
+    <% if (!isAnswer) { %> 
+        asked 
+    <% } else { %> 
+        replied 
+    <% } %> 
+    <strong> <%- content%> </strong> about   <a class="news-link" id="news-link"> <%- video %></a>
+    </p>
+</div>
+</script>
+<script type="text/template" id="add-video">
+<form id="search-form" class="navbar-form" role="search">
+  <input type="search" class="search-bar" id="search-bar" placeholder="youtube URL">
+</form>
+<form id="search-form" class="navbar-form" role="search">
+  <input type="search" class="search-bar" id="search-bar">
+</form>
+</script>
+<script>
+
+    function question() {
+        $("#new-message").val("Q:");
+    }
+    function onYouTubePlayerReady(playerId) {
+      player = document.getElementById("player");
+      player.playVideo();
+    }
+
+
+    function getSeconds() {
+        var time = player.getCurrentTime();
+        $('#seconds').val(time);
+    }
+      // 4. The API will call this function when the video player is ready.
+    function setTime(time) {
+        var index = time.indexOf(':');
+        var min = parseInt(time.substring(0, index));
+        var secs = parseInt(time.substring(index + 1));
+        var minToSecs = min * 60;
+        time = minToSecs + secs;
+        if (time >= 2) {
+            player.seekTo(time - 1, true);
+        }
+          
+    }
+      // 5. The API calls this function when the players state changes.
+      //    The function indicates that when playing a video (state=1),
+      //    the player should play for six seconds and then stop.
+      var done = false;
+      function printTime(){
+        player.playVideo();
+        var time = player.getCurrentTime();
+        $('#seconds').val(time);
+        var min = (Math.floor(time/60)).toString();
+        if (min.length < 2) {
+            min = "0" + min;
+        }
+        var secs = (time % 60).toString();
+        var index = secs.indexOf('.');
+        secs = secs.substring(0, index);
+        if (secs.length < 2) {
+            secs = "0" + secs;
+        }
+        var timeString = min + ":" + secs;
+        $('#time-message').val(timeString);
+      }
+      function pause(event) {
+          if ($('#pause-mode').attr('value') === "1") {
+              player.pauseVideo();
+          }
+      }
+      function play(event) {
+          if (document.getElementById('new-message').value === "") {
+              player.playVideo();
+          } else if (event.keyCode == 13) {
+               player.playVideo();
+               var time = String(player.getCurrentTime());
+               $('#time-message').val(time);
+          }
+      }
+      function pause_mode() {
+          if ($('#pause-mode').attr('value') === "") {
+              $('#pause-mode').val("1");
+          } else {
+              $('#pause-mode').val("");
+          }
+      }
+      function comingSoon() {
+        alert("This allows you to dynamically upload any video you want and generate it on the MainStackr platform -- Coming Soon");
+      }
+</script> 
+
+</html>
